@@ -1,4 +1,4 @@
-import { waitForDebugger } from "inspector";
+
 import { PokeAPI } from "./pokeapi.Client";
 import { useEffect, useState } from "react";
 
