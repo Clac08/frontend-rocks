@@ -1,49 +1,92 @@
-import { useEffect , useState } from "react";
-import { Link, useParams } from "react-router";
+import { waitForDebugger } from "inspector";
+import { PokeAPI } from "./pokeapi.Client";
+import { useEffect, useState } from "react";
 
-export const Detail = () => {
-  const { id } = useParams();
-  return <div>Dettaglio : {id}</div>
+interface PokemonCard{
+  id: number;
+  image: string;
+  name:string;
+  types: string[];
+}
+
+async function fetchData(): Promise<string[]> {
+  const data = await PokeAPI.getPokemonsList();
+  return data.results.map(item => item.name);
+}
+
+const typeColors: {[key: string]: string} = {
+  fire : "bg-red-400 rounded-lg w-20 h-10 text-center font-bold text-white",
+  water: "bg-blue-700 rounded lg w-20 h-10 text-center font-bold text-white",
+  poison: "bg-purple-700 rounded lg w-20 h-10 text-center font-bold text-white",
+  grass: "bg-green-500 rounded lg w-20 h-10 text-center font-bold text-white",
+  flying: "bg-sky-200 rounded lg w-20 h-10 text-center font-bold text-white",
+  bug: "bg-lime-500 rounded lg w-20 h-10 text-center font-bold text-white",
+
+}
+
+function getColoreTipo(type: string){
+  const color = typeColors[type];
+  return color;
+}
+
+interface Cardprops{
+  id: number;
+  image: string;
+  name:string;
+  types: string[];
+}
+
+const Card = (props : Cardprops) => {
+  return (<div className = "bg-white w-2xs ">
+    {props.id} - {props.name} 
+    <img src={props.image}/>
+    <div className = "flex flex-wrap gap-4" >
+    {props.types.map((type) => {
+      return(
+        <div className ={`p-2 ${getColoreTipo(type)}`}>{type}</div>
+      )
+    })}
+    </div>
+  </div>
+  )
 }
 
 
+
 export const App = () => {
-  const [count, setCount] = useState(0);
-  const [title, setTitle] = useState("Pokedex");
+  const [data, setData] = useState<PokemonCard[]>([]);
 
   useEffect(() => {
-    if(count === 4){
-      setTitle("Ho raggiunto il valore 4")
-    }
-  },[count])
+    fetchData().then((result) => {
+      setData(
+        result.map((item) => ({
+          id: 1,
+          name: item,
+          image: item,
+          types: [item],
+        }))
+      );
+    });
+  }, []);
 
-  return (
-    <div className="h-dvh flex flex-col items-center justify-center">
-      <div className="bg-white p-8 rounded-md shadow-lg">
-        <h1 className="text-center font-bold text-3xl text-blue-400 mb-4">
-          {title}
-        </h1>
 
-        <h2 className="text-center font-bold text-xl mb-6">Vite + React</h2>
-
-        <div className="flex flex-col items-center space-y-4">
-          <button
-            className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-md cursor-pointer hover:bg-blue-600 transition-colors"
-            onClick={() => setCount((count) => count + 1)}
-          >
-            Hai premuto il pulsante {count} {count === 1 ? "volta" : "volte"}
-          </button>
-
-          <button
-              className="bg-blue-500 text-white px-4 py-2 rounded-md shadow-md cursor-pointer hover:bg-blue-600 transition-colors"
-              onClick={() => setTitle("Charizard")}
-          >
-            Cambia
-          </button>
-
-          <Link to  = "/frontend-rocks/dettaglio/1">Link alla pagina di dettaglio</Link>
-        </div>
-      </div>
-    </div>
+  return (<div>
+    <div className = "flex flex-wrap gap-4">
+      {data.map((item) => {
+        return(
+          <Card 
+          id={item.id} 
+          name={item.name} 
+          image={item.image} 
+          types={item.types}/>
+        ) 
+      })}
+   </div>
+  </div>
   );
+};
+
+
+export const Detail = () => {
+  return null
 }
