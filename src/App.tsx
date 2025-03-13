@@ -35,7 +35,7 @@ const typeColors: {[key: string]: string} = {
   grass: "bg-green-500 rounded lg w-20 h-10 text-center font-bold text-white",
   flying: "bg-sky-200 rounded lg w-20 h-10 text-center font-bold text-white",
   bug: "bg-lime-500 rounded lg w-20 h-10 text-center font-bold text-white",
-  normal: "bg-grey-500 rounded lg w-20 h-10 text-center font-bold text-white",
+  normal: "bg-grey-900 rounded lg w-20 h-10 text-center font-bold ",
 
 }
 
