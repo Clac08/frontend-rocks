@@ -1,8 +1,21 @@
-import { useState } from "react";
+import { useEffect , useState } from "react";
+import { useParams } from "react-router";
+
+export const Detail = () => {
+  const { id } = useParams();
+  return <div>Dettaglio : {id}</div>
+}
+
 
 export const App = () => {
   const [count, setCount] = useState(0);
   const [title, setTitle] = useState("Pokedex");
+
+  useEffect(() => {
+    if(count === 4){
+      setTitle("Ho raggiunto il valore 4")
+    }
+  },[count])
 
   return (
     <div className="h-dvh flex flex-col items-center justify-center">
