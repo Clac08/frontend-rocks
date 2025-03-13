@@ -9,10 +9,24 @@ interface PokemonCard{
   types: string[];
 }
 
-async function fetchData(): Promise<string[]> {
+async function fetchData(): Promise<PokemonCard[]> {
   const data = await PokeAPI.getPokemonsList();
-  return data.results.map(item => item.name);
+  const pokemons = await Promise.all(
+    data.results.map((pokemon) => {
+      return PokeAPI.getPokemonByName(pokemon.name)
+    })
+  );
+
+  return pokemons.map((pokemon) => {
+    return{
+      id: pokemon.id,
+      name: pokemon.name,
+      image: pokemon.sprites.other["official-artwork"].front_shiny ?? "",
+      types: pokemon.types.map((t) => t.type.name),
+    };
+  });
 }
+
 
 const typeColors: {[key: string]: string} = {
   fire : "bg-red-400 rounded-lg w-20 h-10 text-center font-bold text-white",
@@ -60,10 +74,10 @@ export const App = () => {
     fetchData().then((result) => {
       setData(
         result.map((item) => ({
-          id: 1,
-          name: item,
-          image: item,
-          types: [item],
+          id: item.id,
+          name: item.name,
+          image: item.image,
+          types: item.types,
         }))
       );
     });
